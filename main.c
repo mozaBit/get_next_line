@@ -6,7 +6,7 @@
 /*   By: bmetehri <bmetehri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/04 04:59:32 by bmetehri          #+#    #+#             */
-/*   Updated: 2023/02/04 06:23:27 by bmetehri         ###   ########.fr       */
+/*   Updated: 2023/02/04 07:29:47 by bmetehri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,4 +26,5 @@ int	main(void)
 	printf("returned that %d bytes were read.\n", byte_read);
 	str[byte_read] = '\0';
 	printf("Those bytes are as follows: %s\n", str);
+	return (0);
 }
