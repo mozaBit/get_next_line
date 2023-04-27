@@ -6,7 +6,7 @@
 /*   By: bmetehri <bmetehri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/24 10:21:43 by bmetehri          #+#    #+#             */
-/*   Updated: 2023/04/27 12:28:56 by bmetehri         ###   ########.fr       */
+/*   Updated: 2023/04/27 15:28:38 by bmetehri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,9 +23,7 @@ char	*get_next_line(int fd)
 	read_and_stack(fd, &mylist);
 	if (mylist == NULL)
 		return (NULL);
-	// extract line
 	get_line(mylist, &line);
-	// clean mylist
 	clean_list(&mylist);
 	if (line[0] == '\0')
 	{
@@ -37,7 +35,7 @@ char	*get_next_line(int fd)
 	return (line);
 }
 
-void	read_and_stack(int fd ,t_list **mylist)
+void	read_and_stack(int fd, t_list **mylist)
 {
 	int		readed_chars;
 	char	*buffer;
@@ -66,7 +64,6 @@ void	add_to_mylist(t_list **mylist, char *buffer, int readed_chars)
 	t_list	*new_node;
 	int		i;
 
-	new_node = NULL;
 	new_node = malloc(sizeof(t_list));
 	if (new_node == NULL)
 		return ;
@@ -118,29 +115,29 @@ void	get_line(t_list *mylist, char **line)
 
 void	clean_list(t_list **mylist)
 {
-	int	i;
-	int	j;
+	int		i;
+	int		j;
 	t_list	*last;
-	t_list	*pure_node;
+	t_list	*pure;
 
-	pure_node = malloc(sizeof(t_list));
-	if (pure_node == NULL || mylist == NULL)
+	pure = malloc(sizeof(t_list));
+	if (pure == NULL || mylist == NULL)
 		return ;
-	pure_node->next = NULL;
+	pure->next = NULL;
 	last = ft_lst_get_last(*mylist);
 	i = 0;
 	while (last->content[i] && last->content[i] != '\n')
 		i++;
 	if (last->content && last->content[i] == '\n')
 		i++;
-	pure_node->content = malloc(sizeof(char) * (ft_strlen(last->content) - i ) + 1);
-	if (pure_node->content == NULL)
+	pure->content = malloc(sizeof(char) * (ft_strlen(last->content) - i) + 1);
+	if (pure->content == NULL)
 		return ;
 	j = 0;
 	while (last->content[i])
-		pure_node->content[j++] = last->content[i++];
-	pure_node->content[j] = '\0';
+		pure->content[j++] = last->content[i++];
+	pure->content[j] = '\0';
 	if (*mylist)
 		free_list(*mylist);
-	*mylist = pure_node;
+	*mylist = pure;
 }

@@ -6,7 +6,7 @@
 /*   By: bmetehri <bmetehri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/24 10:22:45 by bmetehri          #+#    #+#             */
-/*   Updated: 2023/04/27 03:23:20 by bmetehri         ###   ########.fr       */
+/*   Updated: 2023/04/27 15:33:01 by bmetehri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,9 @@
 # include <stdlib.h>
 # include <unistd.h>
 # include <fcntl.h>
-# include <stdio.h>
 
 # ifndef BUFFER_SIZE
-# define BUFFER_SIZE 1
+#  define BUFFER_SIZE 1
 # endif
 
 typedef struct s_list
@@ -29,7 +28,7 @@ typedef struct s_list
 }					t_list;
 
 char	*get_next_line(int fd);
-void	read_and_stack(int fd ,t_list **mylist);
+void	read_and_stack(int fd, t_list **mylist);
 int		new_line_founded(t_list *mylist);
 t_list	*ft_lst_get_last(t_list *mylist);
 void	add_to_mylist(t_list **mylist, char *buffer, int readed_chars);

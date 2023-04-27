@@ -6,15 +6,15 @@
 /*   By: bmetehri <bmetehri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/24 10:22:26 by bmetehri          #+#    #+#             */
-/*   Updated: 2023/04/27 11:38:04 by bmetehri         ###   ########.fr       */
+/*   Updated: 2023/04/27 15:38:04 by bmetehri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-int		new_line_founded(t_list *mylist)
+int	new_line_founded(t_list *mylist)
 {
-	int	i;
+	int		i;
 	t_list	*current;
 
 	if (mylist == NULL)
@@ -35,7 +35,6 @@ t_list	*ft_lst_get_last(t_list *mylist)
 	t_list	*current;
 
 	current = mylist;
-	// printf("Avant le memory leak\n");
 	while (current && current->next)
 		current = current->next;
 	return (current);
