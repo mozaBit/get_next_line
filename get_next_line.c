@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: bmetehri <bmetehri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/02/04 04:53:13 by bmetehri          #+#    #+#             */
-/*   Updated: 2023/02/04 09:53:22 by bmetehri         ###   ########.fr       */
+/*   Created: 2023/04/24 10:21:43 by bmetehri          #+#    #+#             */
+/*   Updated: 2023/04/27 03:36:48 by bmetehri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,66 +14,130 @@
 
 char	*get_next_line(int fd)
 {
-	static size_t	line;
-	static size_t	count;
-	t_list			**lst;
-	char			*returned_str;
+	static t_list	*mylist;
+	char			*line;
 
-	while (!check_for_newLine(lst, line))
+	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, &line, 0) < 0)
+		return (NULL);
+	line = NULL;
+	read_and_stack(fd, &mylist);
+	if (mylist == NULL)
+		return (NULL);
+	// extract line
+	get_line(mylist, &line);
+	// clean mylist
+	clean_list(&mylist);
+	if (line[0] == '\0')
 	{
-		count += 10;
-		bam_read(fd, count, lst);
+		free_list(mylist);
+		mylist = NULL;
+		free(line);
+		return (NULL);
 	}
-	if (check_for_newLine(lst, line))
-	{
-		returned_str = get_stuff(line, lst, check_for_newLine(lst, line));
-		line++;
-		return (returned_str);
-	}
-	return (NULL);
+	return (line);
 }
 
-int		check_for_newLine(t_list **lst, size_t line)
+void	read_and_stack(int fd ,t_list **mylist)
 {
-	// checks if there is a newline added in the lst
-	// checks if the new line is not printed yet (while searching for \n it counts them and compare them with line)
-	size_t	backs;
-	t_list	*list;
+	int		readed_chars;
+	char	*buffer;
 
-	if (!lst)
-		return (0);
-	list = *lst;
-	backs = 1;
-	while (list)
+	readed_chars = 1;
+	while (!new_line_founded(*mylist) && readed_chars != 0)
 	{
-		if (list->content =='\n' && backs >= line + 1)
-			return (backs);
-		else if (list->content =='\n')
-			backs += 1;
-		list = list->next;
+		buffer = malloc(sizeof(char) * (BUFFER_SIZE + 1));
+		if (buffer == NULL)
+			return ;
+		readed_chars = (int)read(fd, buffer, BUFFER_SIZE);
+		if ((*mylist == NULL && readed_chars == 0) || readed_chars == -1)
+		{
+			free(buffer);
+			return ;
+		}
+		buffer[readed_chars] = '\0';
+		add_to_mylist(mylist, buffer, readed_chars);
+		free(buffer);
 	}
-	return (ft_lstclear(lst));
 }
 
-int		bam_read(int fd, size_t count, t_list **lst)
+void	add_to_mylist(t_list **mylist, char *buffer, int readed_chars)
 {
-	// read new content and add them to the lst
-	char	*c;
-	int		times;
+	t_list	*last_node;
+	t_list	*new_node;
+	int		i;
 
-	lst = (t_list **) malloc( count * sizeof(t_list *));
-	c = (char *) calloc(count + 1, sizeof(char));
-	read(fd, &c, count);
-	times = 0;
-	while (times < count)
+	new_node = malloc(sizeof(t_list));
+	if (new_node == NULL)
+		return ;
+	new_node->next = NULL;
+	new_node->content = malloc(sizeof(char) * (readed_chars + 1));
+	if (new_node->content == NULL)
+		return ;
+	i = 0;
+	while (buffer[i] && i < readed_chars)
 	{
-		ft_lstadd_back(lst, ft_lstnew(c[times]));
-		times += 1;
+		new_node->content[i] = buffer[i];
+		i++;
 	}
-	return (0);
+	new_node->content[i] = '\0';
+	if (*mylist == NULL)
+	{
+		*mylist = new_node;
+		return ;
+	}
+	last_node = ft_lst_get_last(*mylist);
+	last_node->next = new_node;
 }
 
-char	*get_stuff(size_t line, t_list **lst, int backs)
+void	get_line(t_list *mylist, char **line)
 {
-	return (NULL);
+	int	i;
+	int	j;
+
+	allocate_memory_to_line(line, mylist);
+	if (*line == NULL)
+		return ;
+	j = 0;
+	while (mylist)
+	{
+		i = 0;
+		while (mylist->content[i])
+		{
+			if (mylist->content[i] == '\n')
+			{
+				(*line)[j++] = mylist->content[i];
+				break ;
+			}
+			(*line)[j++] = mylist->content[i++];
+		}
+		mylist = mylist->next;
+	}
+	(*line)[j] = '\0';
+}
+
+void	clean_list(t_list **mylist)
+{
+	int	i;
+	int	j;
+	t_list	*last;
+	t_list	*pure_node;
+
+	pure_node = malloc(sizeof(t_list));
+	if (pure_node == NULL || mylist == NULL)
+		return ;
+	last = ft_lst_get_last(*mylist);
+	i = 0;
+	while (last->content[i] && last->content[i] != '\n')
+		i++;
+	while (last->content && last->content[i] == '\n')
+		i++;
+	pure_node->content = malloc(sizeof(char) * (ft_strlen(last->content) - i ) + 1);
+	if (last->content == NULL)
+		return ;
+	j = 0;
+	while (last->content[i])
+		pure_node->content[j++] = last->content[i++];
+	pure_node->content[j] = '\0';
+	free_list(*mylist);
+	*mylist = pure_node;
 }

@@ -5,50 +5,89 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: bmetehri <bmetehri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/02/04 06:24:02 by bmetehri          #+#    #+#             */
-/*   Updated: 2023/02/04 08:36:03 by bmetehri         ###   ########.fr       */
+/*   Created: 2023/04/24 10:22:26 by bmetehri          #+#    #+#             */
+/*   Updated: 2023/04/27 03:32:34 by bmetehri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-t_list	*ft_lstnew(char content)
+int		new_line_founded(t_list *mylist)
 {
-	t_list	*new_node;
+	int	i;
+	t_list	*current;
 
-	new_node = malloc(sizeof(t_list));
-	if (!new_node)
-		return (NULL);
-	new_node->content = content;
-	new_node->next = NULL;
-	return (new_node);
-}
-
-void	ft_lstadd_back(t_list **lst, t_list *new)
-{
-	t_list	*list;
-
-	if (!(*lst))
-		*lst = new;
-	else
+	if (mylist == NULL)
+		return (0);
+	current = ft_lst_get_last(mylist);
+	i = 0;
+	while (current->content[i])
 	{
-		list = *lst;
-		while (list->next)
-			list = list->next;
-		list->next = new;
-	}
-}
-
-int		ft_lstclear(t_list **lst)
-{
-	t_list	*temp;
-
-	while ((*lst))
-	{
-		temp = *lst;
-		(*lst) = (*lst)->next;
-		free(temp);
-		temp = NULL;
+		if (current->content[i] == '\n')
+			return (1);
+		i++;
 	}
 	return (0);
+}
+
+t_list	*ft_lst_get_last(t_list *mylist)
+{
+	t_list	*current;
+
+	current = mylist;
+	while (current && current->next)
+		current = current->next;
+	return (current);
+
+}
+
+void	allocate_memory_to_line(char **line, t_list *mylist)
+{
+	int	i;
+	int	len;
+
+	len = 0;
+	while (mylist)
+	{
+		i = 0;
+		while (mylist->content[i])
+		{
+			if (mylist->content[i] == '\n')
+			{
+				len++;
+				break ;
+			}
+			len++;
+			i++;
+		}
+		mylist = mylist->next;
+	}
+	*line = malloc(sizeof(char) * (len + 1));
+}
+
+int	ft_strlen(char *str)
+{
+	int	i;
+
+	if (str == NULL)
+		return (0);
+	i = 0;
+	while (str[i])
+		i++;
+	return (i);
+}
+
+void	free_list(t_list *mylist)
+{
+	t_list	*current;
+	t_list	*next;
+
+	current = mylist;
+	while (current)
+	{
+		free(current->content);
+		next = current->next;
+		free(current);
+		current = next;
+	}
 }
