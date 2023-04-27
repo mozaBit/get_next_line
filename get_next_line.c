@@ -6,7 +6,7 @@
 /*   By: bmetehri <bmetehri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/24 10:21:43 by bmetehri          #+#    #+#             */
-/*   Updated: 2023/04/27 03:36:48 by bmetehri         ###   ########.fr       */
+/*   Updated: 2023/04/27 12:28:56 by bmetehri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,9 +17,9 @@ char	*get_next_line(int fd)
 	static t_list	*mylist;
 	char			*line;
 
+	line = NULL;
 	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, &line, 0) < 0)
 		return (NULL);
-	line = NULL;
 	read_and_stack(fd, &mylist);
 	if (mylist == NULL)
 		return (NULL);
@@ -66,6 +66,7 @@ void	add_to_mylist(t_list **mylist, char *buffer, int readed_chars)
 	t_list	*new_node;
 	int		i;
 
+	new_node = NULL;
 	new_node = malloc(sizeof(t_list));
 	if (new_node == NULL)
 		return ;
@@ -125,19 +126,21 @@ void	clean_list(t_list **mylist)
 	pure_node = malloc(sizeof(t_list));
 	if (pure_node == NULL || mylist == NULL)
 		return ;
+	pure_node->next = NULL;
 	last = ft_lst_get_last(*mylist);
 	i = 0;
 	while (last->content[i] && last->content[i] != '\n')
 		i++;
-	while (last->content && last->content[i] == '\n')
+	if (last->content && last->content[i] == '\n')
 		i++;
 	pure_node->content = malloc(sizeof(char) * (ft_strlen(last->content) - i ) + 1);
-	if (last->content == NULL)
+	if (pure_node->content == NULL)
 		return ;
 	j = 0;
 	while (last->content[i])
 		pure_node->content[j++] = last->content[i++];
 	pure_node->content[j] = '\0';
-	free_list(*mylist);
+	if (*mylist)
+		free_list(*mylist);
 	*mylist = pure_node;
 }

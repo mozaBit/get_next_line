@@ -6,7 +6,7 @@
 /*   By: bmetehri <bmetehri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/24 10:22:26 by bmetehri          #+#    #+#             */
-/*   Updated: 2023/04/27 03:32:34 by bmetehri         ###   ########.fr       */
+/*   Updated: 2023/04/27 11:38:04 by bmetehri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,10 +35,10 @@ t_list	*ft_lst_get_last(t_list *mylist)
 	t_list	*current;
 
 	current = mylist;
+	// printf("Avant le memory leak\n");
 	while (current && current->next)
 		current = current->next;
 	return (current);
-
 }
 
 void	allocate_memory_to_line(char **line, t_list *mylist)
